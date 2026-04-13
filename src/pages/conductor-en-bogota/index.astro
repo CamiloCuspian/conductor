@@ -1,0 +1,11 @@
+---
+// Página: Conductor Privado en Bogotá
+// URL: /conductor-bogota/conductor-en-bogota/
+// SEO: keyword "conductor privado bogotá" + intención local
+import CityTemplate from "../../components/CityTemplate.astro";
+import { cities } from "../../data/cities";
+
+const city = cities.find((c) => c.slug === "conductor-en-bogota")!;
+---
+
+<CityTemplate city={city} />

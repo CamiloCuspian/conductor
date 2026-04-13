@@ -1,0 +1,323 @@
+---
+import { site } from "../config";
+import { cities } from "../data/cities";
+import WhatsAppButton from "./WhatsAppButton.astro";
+
+const { pathname } = Astro.url;
+const base = site.base;
+
+const navLinks = [
+  { href: `${base}/`, label: "Inicio" },
+  { href: `${base}/#servicios`, label: "Servicios" },
+  { href: `${base}/#como-funciona`, label: "¿Cómo funciona?" },
+  { href: `${base}/#contacto`, label: "Contacto" },
+];
+---
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a href={`${base}/`} class="logo" aria-label={`${site.name} – Inicio`}>
+      <span class="logo-icon" aria-hidden="true">🚗</span>
+      <span class="logo-text">
+        <span class="logo-main">{site.name}</span>
+        <span class="logo-sub">Bogotá · 24/7</span>
+      </span>
+    </a>
+
+    <nav aria-label="Navegación principal">
+      <ul class="nav-list" role="list">
+        {navLinks.map(({ href, label }) => (
+          <li>
+            <a
+              href={href}
+              class={`nav-link ${pathname === href ? "nav-link--active" : ""}`}
+            >
+              {label}
+            </a>
+          </li>
+        ))}
+
+        <li class="nav-dropdown">
+          <button class="nav-link nav-dropdown-btn" aria-expanded="false" aria-haspopup="true">
+            Ciudades ▾
+          </button>
+          <ul class="dropdown-menu" role="menu">
+            {cities.map((city) => (
+              <li role="none">
+                <a
+                  href={`${base}/${city.slug}/`}
+                  class={`dropdown-link ${pathname.includes(city.slug) ? "nav-link--active" : ""}`}
+                  role="menuitem"
+                >
+                  📍 {city.name}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="header-actions">
+      <WhatsAppButton text="WhatsApp" variant="sm" />
+      <button
+        class="hamburger"
+        id="menu-toggle"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        aria-label="Abrir menú"
+      >
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="mobile-menu" id="mobile-menu" role="dialog" aria-label="Menú móvil" hidden>
+    <nav>
+      <ul role="list">
+        {navLinks.map(({ href, label }) => (
+          <li><a href={href} class="mobile-link">{label}</a></li>
+        ))}
+        <li class="mobile-cities-label">📍 Ciudades</li>
+        {cities.map((city) => (
+          <li>
+            <a href={`${base}/${city.slug}/`} class="mobile-link mobile-link--city">
+              {city.name}
+            </a>
+          </li>
+        ))}
+        <li>
+          <WhatsAppButton
+            text="Escribir por WhatsApp"
+            message={site.whatsappMessageContrata}
+            variant="full"
+          />
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255, 255, 255, 0.97);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--color-borde);
+    box-shadow: var(--shadow);
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 4rem;
+    gap: 1rem;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+  .logo:hover { text-decoration: none; }
+  .logo-icon { font-size: 1.5rem; }
+  .logo-text { display: flex; flex-direction: column; line-height: 1.1; }
+  .logo-main { font-weight: 700; font-size: 1rem; color: var(--color-texto); }
+  .logo-sub {
+    font-size: 0.7rem;
+    color: var(--color-principal);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .nav-list {
+    display: flex;
+    gap: 0.25rem;
+    list-style: none;
+    align-items: center;
+  }
+
+  .nav-dropdown { position: relative; }
+
+  .nav-dropdown-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: var(--fuente-texto);
+  }
+
+  .dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    list-style: none;
+    padding: 0.5rem;
+    padding-top: 1rem;
+    min-width: 180px;
+    z-index: 200;
+    margin-top: 0;
+  }
+
+  .dropdown-menu::before {
+    content: "";
+    position: absolute;
+    top: -0.75rem;
+    left: 0;
+    right: 0;
+    height: 0.75rem;
+  }
+
+  .nav-dropdown:hover .dropdown-menu,
+  .nav-dropdown-btn[aria-expanded="true"] + .dropdown-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .dropdown-link {
+    display: block;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius);
+    color: var(--color-texto);
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: var(--transition);
+  }
+  .dropdown-link:hover {
+    background: rgba(26, 86, 219, 0.06);
+    color: var(--color-principal);
+    text-decoration: none;
+  }
+  .nav-link {
+    padding: 0.4rem 0.75rem;
+    border-radius: var(--radius);
+    color: var(--color-texto-suave);
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: var(--transition);
+    text-decoration: none;
+  }
+  .nav-link:hover {
+    color: var(--color-principal);
+    background: rgba(26, 86, 219, 0.06);
+    text-decoration: none;
+  }
+  .nav-link--active {
+    color: var(--color-principal);
+    font-weight: 600;
+  }
+
+  .header-actions { display: flex; align-items: center; gap: 0.75rem; }
+
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.25rem;
+  }
+  .hamburger span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--color-texto);
+    border-radius: 2px;
+    transition: var(--transition);
+  }
+
+  .mobile-menu {
+    background: white;
+    border-top: 1px solid var(--color-borde);
+    padding: 1.5rem 1.25rem;
+  }
+  .mobile-menu ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .mobile-link {
+    display: block;
+    padding: 0.6rem 0.75rem;
+    border-radius: var(--radius);
+    font-weight: 500;
+    color: var(--color-texto);
+    text-decoration: none;
+  }
+  .mobile-link:hover {
+    background: var(--color-bg-alt);
+    text-decoration: none;
+  }
+
+  .mobile-cities-label {
+    padding: 0.75rem 0.75rem 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-texto-suave);
+  }
+
+  .mobile-link--city {
+    padding-left: 1.5rem;
+    font-size: 0.95rem;
+  }
+
+  @media (max-width: 768px) {
+    nav { display: none; }
+    .hamburger { display: flex; }
+    /* Ocultar botón WhatsApp en header en mobile — aparece en menú */
+    .header-actions > :global(.btn-whatsapp) { display: none; }
+  }
+</style>
+
+<script>
+  const toggle = document.getElementById("menu-toggle");
+  const menu = document.getElementById("mobile-menu");
+
+  toggle?.addEventListener("click", () => {
+    const isOpen = toggle.getAttribute("aria-expanded") === "true";
+    toggle.setAttribute("aria-expanded", String(!isOpen));
+    menu?.toggleAttribute("hidden");
+  });
+
+  menu?.addEventListener("click", (e) => {
+    if (e.target.matches("a")) {
+      toggle?.setAttribute("aria-expanded", "false");
+      menu.setAttribute("hidden", "");
+    }
+  });
+
+  const dropdownBtn = document.querySelector(".nav-dropdown-btn");
+  const dropdownMenu = document.querySelector(".dropdown-menu");
+
+  dropdownBtn?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const isOpen = dropdownBtn.getAttribute("aria-expanded") === "true";
+    dropdownBtn.setAttribute("aria-expanded", String(!isOpen));
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!dropdownMenu?.contains(e.target as Node)) {
+      dropdownBtn?.setAttribute("aria-expanded", "false");
+    }
+  });
+
+  dropdownMenu?.addEventListener("click", (e) => e.stopPropagation());
+</script>

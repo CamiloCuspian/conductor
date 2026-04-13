@@ -1,0 +1,262 @@
+---
+import { site, waUrl } from "../config";
+import { getContactMethods, serviceOptions } from "../data/contactMethods";
+import WhatsAppButton from "./WhatsAppButton.astro";
+
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwykbQenV0gDvnqoq8PApL7pmgN6z6XNFSD0qAVs7OuvKhQrMUd_FHspgCzSo6Xaq_8/exec";
+const contactMethods = getContactMethods();
+---
+
+<section id="contacto" aria-labelledby="contacto-titulo" class="seccion-completa seccion-completa--gris">
+  <div class="padding">
+    <div class="section">
+
+      <div class="two_columns contact-grid">
+        <div class="flow">
+          <div class="badge">Contáctame</div>
+          <h2 id="contacto-titulo">Solicita tu conductor en Bogotá</h2>
+          <p class="text-muted">
+            Completa el formulario y te respondo en menos de 3 minutos.
+            También puedes escribirme directamente por WhatsApp.
+          </p>
+
+          <div class="contact-methods">
+            {contactMethods.map((method) => (
+              method.isLink ? (
+                <a
+                  href={method.href}
+                  class="contact-method"
+                  target={method.href?.startsWith("https") ? "_blank" : undefined}
+                  rel={method.href?.startsWith("https") ? "noopener" : undefined}
+                >
+                  <span class="method-icon" aria-hidden="true">{method.icon}</span>
+                  <div>
+                    <strong>{method.label}</strong>
+                    <span>{method.value}</span>
+                  </div>
+                </a>
+              ) : (
+                <div class="contact-method">
+                  <span class="method-icon" aria-hidden="true">{method.icon}</span>
+                  <div>
+                    <strong>{method.label}</strong>
+                    <span>{method.value}</span>
+                  </div>
+                </div>
+              )
+            ))}
+          </div>
+        </div>
+
+        <div class="card form-wrapper">
+          <form id="contact-form" novalidate>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="nombre">Nombre completo *</label>
+                <input type="text" id="nombre" name="nombre" placeholder="Juan Pérez" required autocomplete="name" />
+                <span class="field-error" id="error-nombre"></span>
+              </div>
+
+              <div class="form-group">
+                <label for="telefono">WhatsApp / Celular *</label>
+                <input type="tel" id="telefono" name="telefono" placeholder="+57 300 000 0000" required autocomplete="tel" />
+                <span class="field-error" id="error-telefono"></span>
+              </div>
+
+              <div class="form-group form-group--full">
+                <label for="servicio">Tipo de servicio *</label>
+                <select id="servicio" name="servicio" required>
+                  <option value="" disabled selected>Selecciona una opción</option>
+                  {serviceOptions.map(({ value, label }) => (
+                    <option value={value}>{label}</option>
+                  ))}
+                </select>
+                <span class="field-error" id="error-servicio"></span>
+              </div>
+
+              <div class="form-group">
+                <label for="fecha">Fecha del servicio *</label>
+                <input type="date" id="fecha" name="fecha" required />
+                <span class="field-error" id="error-fecha"></span>
+              </div>
+
+              <div class="form-group">
+                <label for="hora">Hora aproximada</label>
+                <input type="time" id="hora" name="hora" />
+              </div>
+
+              <div class="form-group form-group--full">
+                <label for="mensaje">Detalles del viaje *</label>
+                <textarea id="mensaje" name="mensaje" rows="4"
+                  placeholder="Ej: Necesito conductor desde Chapinero hasta El Dorado el 15 de abril a las 4am."
+                  required></textarea>
+                <span class="field-error" id="error-mensaje"></span>
+              </div>
+            </div>
+
+            <input type="text" name="_honeypot" style="display:none" tabindex="-1" autocomplete="off" />
+
+            <button type="submit" class="btn btn-primary submit-btn" id="submit-btn">
+              <span id="btn-text">Enviar solicitud</span>
+              <span id="btn-loading" hidden>Enviando...</span>
+            </button>
+          </form>
+
+          <div id="form-success" class="form-status" hidden>
+            <span class="status-icon">✅</span>
+            <h3>¡Solicitud enviada!</h3>
+            <p>Te respondo en menos de 3 minutos por WhatsApp.</p>
+            <WhatsAppButton text="Escribir también por WhatsApp" />
+          </div>
+
+          <div id="form-error" class="form-status" hidden>
+            <span class="status-icon">⚠️</span>
+            <h3>Hubo un problema</h3>
+            <p>Por favor escríbeme directamente por WhatsApp.</p>
+            <WhatsAppButton text="Ir a WhatsApp" />
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact-grid {
+    grid-template-columns: 1fr 1.3fr;
+    align-items: start;
+  }
+
+  .contact-methods { display: flex; flex-direction: column; gap: 1rem; }
+
+  .contact-method {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    background: white;
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radius);
+    text-decoration: none;
+    color: var(--color-texto);
+    transition: var(--transition);
+  }
+  a.contact-method:hover {
+    border-color: var(--color-principal);
+    box-shadow: 0 0 0 3px rgba(26,86,219,0.1);
+    text-decoration: none;
+  }
+  .method-icon { font-size: 1.5rem; flex-shrink: 0; }
+  .contact-method div { display: flex; flex-direction: column; gap: 0.1rem; }
+  .contact-method strong { font-size: 0.9rem; }
+  .contact-method span { font-size: 0.85rem; color: var(--color-texto-suave); }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+  .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+  .form-group--full { grid-column: 1 / -1; }
+
+  label { font-size: 0.875rem; font-weight: 600; color: var(--color-texto); }
+
+  input, select, textarea {
+    width: 100%;
+    padding: 0.65rem 0.875rem;
+    border: 1.5px solid var(--color-borde);
+    border-radius: var(--radius);
+    font-size: 1rem;
+    font-family: var(--fuente-texto);
+    color: var(--color-texto);
+    background: white;
+    transition: var(--transition);
+    outline: none;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--color-principal);
+    box-shadow: 0 0 0 3px rgba(26,86,219,0.1);
+  }
+  input.invalid, select.invalid, textarea.invalid { border-color: var(--color-error); }
+  textarea { resize: vertical; min-height: 100px; }
+
+  .field-error { font-size: 0.8rem; color: var(--color-error); min-height: 1rem; }
+  .submit-btn { width: 100%; justify-content: center; }
+
+  .form-status {
+    text-align: center;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .status-icon { font-size: 3rem; }
+  .form-status h3 { margin: 0; }
+  .form-status p { color: var(--color-texto-suave); max-width: 35ch; }
+
+  @media (max-width: 900px) {
+    .contact-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .form-grid { grid-template-columns: 1fr; }
+  }
+</style>
+
+<script define:vars={{ APPS_SCRIPT_URL }}>
+  const form = document.getElementById("contact-form");
+  const btnText = document.getElementById("btn-text");
+  const btnLoading = document.getElementById("btn-loading");
+  const submitBtn = document.getElementById("submit-btn");
+  const successDiv = document.getElementById("form-success");
+  const errorDiv = document.getElementById("form-error");
+
+  function validateField(input) {
+    const errorEl = document.getElementById(`error-${input.name}`);
+    let msg = "";
+    if (input.required && !input.value.trim()) {
+      msg = "Este campo es obligatorio";
+    } else if (input.type === "tel" && input.value && !/^\+?[\d\s\-()]{7,15}$/.test(input.value)) {
+      msg = "Ingresa un número válido";
+    } else if (input.type === "date" && input.value) {
+      const selected = new Date(input.value + "T00:00:00");
+      const today = new Date(); today.setHours(0, 0, 0, 0);
+      if (selected < today) msg = "La fecha debe ser hoy o en el futuro";
+    }
+    input.classList.toggle("invalid", !!msg);
+    if (errorEl) errorEl.textContent = msg;
+    return !msg;
+  }
+
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const fields = form.querySelectorAll("input[required], select[required], textarea[required]");
+    const isValid = Array.from(fields).map(validateField).every(Boolean);
+    if (!isValid) return;
+    const honeypot = form.querySelector('[name="_honeypot"]');
+    if (honeypot?.value) return;
+
+    if (submitBtn) submitBtn.disabled = true;
+    btnText?.toggleAttribute("hidden", true);
+    btnLoading?.toggleAttribute("hidden", false);
+
+    const data = new FormData(form);
+    data.append("timestamp", new Date().toLocaleString("es-CO", { timeZone: "America/Bogota" }));
+    data.append("fuente", "Formulario web");
+
+    try {
+      await fetch(APPS_SCRIPT_URL, { method: "POST", body: data, mode: "no-cors" });
+      form.style.display = "none";
+      successDiv?.removeAttribute("hidden");
+    } catch (err) {
+      form.style.display = "none";
+      errorDiv?.removeAttribute("hidden");
+    }
+  });
+
+  form?.querySelectorAll("input, select, textarea").forEach((field) => {
+    field.addEventListener("blur", () => validateField(field));
+  });
+</script>

@@ -1,0 +1,84 @@
+---
+import { site } from "../config";
+
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  canonical?: string;
+  type?: "website" | "article";
+}
+
+const {
+  title,
+  description,
+  image = `${site.base}/og-image.jpg`,
+  type = "website",
+} = Astro.props;
+
+const siteUrl = Astro.site?.toString().replace(/\/$/, "") ?? "";
+const canonical = Astro.props.canonical ?? Astro.url.href;
+const ogImage = image.startsWith("http") ? image : `${siteUrl}${image}`;
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": site.name,
+  "description": description,
+  "url": siteUrl,
+  "telephone": site.phoneFull,
+  "email": site.email,
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": site.city,
+    "addressRegion": site.region,
+    "addressCountry": site.country,
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": site.geo.latitude,
+    "longitude": site.geo.longitude,
+  },
+  "areaServed": {
+    "@type": "City",
+    "name": site.city,
+  },
+  "priceRange": site.priceRange,
+  "openingHours": site.openingHours,
+  "image": ogImage,
+  "sameAs": [],
+};
+---
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<title>{title}</title>
+<meta name="description" content={description} />
+<meta name="robots" content="index, follow" />
+
+<link rel="canonical" href={canonical} />
+
+<meta property="og:type" content={type} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={ogImage} />
+<meta property="og:url" content={canonical} />
+<meta property="og:site_name" content={site.name} />
+<meta property="og:locale" content="es_CO" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImage} />
+
+<script type="application/ld+json" set:html={JSON.stringify(schema)} />
+
+<link rel="icon" type="image/svg+xml" href={`${site.base}/favicon.svg`} />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+  rel="stylesheet"
+/>

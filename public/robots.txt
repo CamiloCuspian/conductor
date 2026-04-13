@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Sitemap del sitio
+Sitemap: https://tu-usuario.github.io/conductor-bogota/sitemap.xml

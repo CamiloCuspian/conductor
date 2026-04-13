@@ -1,0 +1,139 @@
+---
+import { site } from "../config";
+import { cities } from "../data/cities";
+import WhatsAppButton from "./WhatsAppButton.astro";
+
+const currentYear = new Date().getFullYear();
+const base = site.base;
+
+const serviceLinks = [
+  "Traslados al aeropuerto",
+  "Conductor para eventos",
+  "Servicio empresarial",
+  "Conductor a domicilio",
+  "Servicio diario",
+  "Traslados médicos",
+];
+
+const coverageAreas = [
+  "Chapinero", "Usaquén", "Suba", "Kennedy", "Fontibón",
+  "Chía, Cajicá, Zipaquirá",
+];
+---
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href={`${base}/`} class="logo-footer">
+          🚗 <strong>{site.name}</strong>
+        </a>
+        <p>{site.description}</p>
+        <WhatsAppButton
+          text="Escribir por WhatsApp"
+          message={site.whatsappMessageContrata}
+        />
+      </div>
+
+      <nav aria-label="Servicios">
+        <h3 class="footer-heading">Servicios</h3>
+        <ul role="list">
+          {serviceLinks.map((label) => (
+            <li><a href={`${base}/#servicios`}>{label}</a></li>
+          ))}
+        </ul>
+      </nav>
+
+      <div>
+        <h3 class="footer-heading">Ciudades</h3>
+        <ul role="list">
+          {cities.map((city) => (
+            <li>
+              <a href={`${base}/${city.slug}/`}>
+                Conductor {city.preposition}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      <p>
+        &copy; {currentYear} {site.name}. Todos los derechos reservados.
+      </p>
+      <p class="footer-seo-text">
+        Conductor privado Bogotá · Conductor privado Cali · Conductor privado Barranquilla ·
+        {site.name} · Traslados aeropuerto El Dorado · Alfonso Bonilla Aragón · Ernesto Cortissoz
+      </p>
+    </div>
+  </div>
+</footer>
+
+<WhatsAppButton variant="float" />
+
+<style>
+  .site-footer {
+    background: var(--color-oscuro);
+    color: rgba(255,255,255,0.75);
+    padding-block: 3rem 1.5rem;
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 2.5rem;
+    margin-bottom: 2.5rem;
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .logo-footer {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: white;
+    font-size: 1.1rem;
+    text-decoration: none;
+    margin-bottom: 1rem;
+  }
+  .logo-footer:hover { text-decoration: none; color: white; }
+  .footer-brand p {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+    max-width: 36ch;
+  }
+
+  .footer-heading {
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+  }
+
+  .site-footer ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .site-footer li { font-size: 0.875rem; }
+  .site-footer a {
+    color: rgba(255,255,255,0.65);
+    text-decoration: none;
+    transition: var(--transition);
+  }
+  .site-footer a:hover { color: white; text-decoration: none; }
+
+  .footer-bottom { text-align: center; }
+  .footer-bottom p { font-size: 0.8rem; margin-bottom: 0.5rem; }
+  .footer-seo-text { color: rgba(255,255,255,0.35); font-size: 0.75rem; }
+
+  @media (max-width: 768px) {
+    .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
+  }
+</style>

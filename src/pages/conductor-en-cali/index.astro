@@ -1,0 +1,11 @@
+---
+// Página: Conductor Privado en Cali
+// URL: /conductor-bogota/conductor-en-cali/
+// SEO: keyword "conductor privado cali" + intención local
+import CityTemplate from "../../components/CityTemplate.astro";
+import { cities } from "../../data/cities";
+
+const city = cities.find((c) => c.slug === "conductor-en-cali")!;
+---
+
+<CityTemplate city={city} />

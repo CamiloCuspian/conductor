@@ -1,0 +1,60 @@
+---
+// ─────────────────────────────────────────────────────────
+// src/pages/index.astro — Página principal
+// ─────────────────────────────────────────────────────────
+// JEKYLL vs ASTRO:
+//   Jekyll: index.html con front matter YAML al inicio:
+//     ---
+//     layout: default
+//     title: "Mi título"
+//     ---
+//     <p>Contenido HTML aquí...</p>
+//
+//   Astro: index.astro con frontmatter JavaScript:
+//     ---
+//     import Layout from "../layouts/BaseLayout.astro";
+//     const title = "Mi título";
+//     ---
+//     <Layout title={title}>
+//       <p>Contenido aquí...</p>
+//     </Layout>
+//
+// DIFERENCIA CLAVE:
+//   En Jekyll el layout se especifica como string ("default").
+//   En Astro importas el componente directamente → autocompletado
+//   en el editor, refactoring automático, errores en build time.
+// ─────────────────────────────────────────────────────────
+
+// Importamos el layout base (equivale a layout: default en Jekyll)
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+// Importamos cada sección como componentes independientes
+// En Jekyll serían {% include hero.html %}, etc.
+import Hero from "../components/Hero.astro";
+import Services from "../components/Services.astro";
+import HowItWorks from "../components/HowItWorks.astro";
+import ContactForm from "../components/ContactForm.astro";
+
+// Estos datos se pasan al componente SEO via BaseLayout
+// Equivale al front matter YAML de Jekyll
+const SEO = {
+  title: "Conductor Privado en Bogotá | Servicio 24/7 · Aeropuerto, Eventos y Más",
+  description:
+    "¿Buscas conductor privado en Bogotá? Servicio profesional, seguro y puntual. Traslados al aeropuerto El Dorado, eventos, empresas y uso diario. ¡Respuesta en 3 minutos!",
+};
+---
+
+<!--
+  BaseLayout envuelve todo el contenido con <html>, <head> y <body>.
+  Los atributos que le pasamos (title, description) llegan como props.
+-->
+<BaseLayout title={SEO.title} description={SEO.description}>
+  <!--
+    Todo esto es el "slot" → reemplaza {{ content }} en Jekyll.
+    Cada componente es autocontenido: HTML + CSS + JS en un solo archivo.
+  -->
+  <Hero />
+  <Services />
+  <HowItWorks />
+  <ContactForm />
+</BaseLayout>

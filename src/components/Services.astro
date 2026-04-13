@@ -1,0 +1,59 @@
+---
+import { services } from "../data/services";
+---
+
+<section id="servicios" aria-labelledby="servicios-titulo" class="seccion-completa seccion-completa--gris">
+  <div class="padding">
+    <div class="section">
+
+      <div class="section-intro">
+        <div class="badge">Servicios</div>
+        <h2 id="servicios-titulo">Conductor en Bogotá para cada ocasión</h2>
+        <p>
+          Servicio profesional disponible en toda Bogotá y municipios aledaños
+          (Chía, Cajicá, Zipaquirá, La Calera, Sopó).
+        </p>
+      </div>
+
+      <div class="cards-grid">
+        {services.map((service) => (
+          <article class="card card--interactive">
+            <div class="service-icon" aria-hidden="true">{service.icon}</div>
+            <h3>{service.title}</h3>
+            <p>{service.description}</p>
+            <ul class="sr-only" aria-hidden="true">
+              {service.keywords.map((kw) => <li>{kw}</li>)}
+            </ul>
+          </article>
+        ))}
+      </div>
+
+      <div class="center" style="margin-top: 2rem;">
+        <p class="text-muted" style="margin-bottom: 1rem;">
+          ¿No encuentras lo que buscas? Cuéntame tu necesidad.
+        </p>
+        <a href="#contacto" class="btn btn-primary">Consultar disponibilidad</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<style>
+  .service-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    line-height: 1;
+  }
+
+  .card h3 {
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+  }
+
+  .card p {
+    color: var(--color-texto-suave);
+    font-size: 0.95rem;
+    max-width: none;
+  }
+</style>

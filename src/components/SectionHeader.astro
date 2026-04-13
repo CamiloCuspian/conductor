@@ -1,0 +1,31 @@
+---
+interface Props {
+  badge?: string;
+  title: string;
+  subtitle?: string;
+  id?: string;
+  badgeLight?: boolean;
+}
+
+const { badge, title, subtitle, id, badgeLight = false } = Astro.props;
+---
+
+<div class="section-header">
+  {badge && (
+    <div class:list={["badge", badgeLight && "badge--light"]}>
+      {badge}
+    </div>
+  )}
+  <h2 class="section-title" id={id}>{title}</h2>
+  {subtitle && (
+    <p class="section-subtitle">{subtitle}</p>
+  )}
+</div>
+
+<style>
+  .badge--light {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+  }
+</style>

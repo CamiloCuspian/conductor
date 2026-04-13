@@ -1,0 +1,173 @@
+---
+interface FaqItem {
+  question: string;
+  answer: string;
+}
+
+interface Props {
+  faqs: FaqItem[];
+  title?: string;
+  badge?: string;
+}
+
+const {
+  faqs,
+  title = "Preguntas frecuentes",
+  badge = "FAQ",
+} = Astro.props;
+---
+
+<section class="faq-section" aria-labelledby="faq-titulo">
+  <div class="padding">
+    <div class="section">
+
+      <div class="section-intro">
+        <div class="badge">{badge}</div>
+        <h2 id="faq-titulo">{title}</h2>
+      </div>
+
+      <div class="faq-list" role="list">
+        {faqs.map((faq, i) => (
+          <div class="faq-item" role="listitem">
+            <button
+              class="faq-button"
+              aria-expanded="false"
+              aria-controls={`faq-answer-${i}`}
+              id={`faq-btn-${i}`}
+            >
+              <span class="faq-question">{faq.question}</span>
+              <span class="faq-icon" aria-hidden="true">+</span>
+            </button>
+            <div
+              class="faq-answer"
+              id={`faq-answer-${i}`}
+              role="region"
+              aria-labelledby={`faq-btn-${i}`}
+              hidden
+            >
+              <p>{faq.answer}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script type="application/ld+json" set:html={JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqs.map((faq) => ({
+    "@type": "Question",
+    "name": faq.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": faq.answer,
+    },
+  })),
+})} />
+
+<style>
+  .faq-section { background: var(--color-bg); }
+
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: min(100%, 780px);
+    margin-inline: auto;
+  }
+
+  .faq-item {
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: white;
+    transition: var(--transition);
+  }
+
+  .faq-item:has(.faq-button[aria-expanded="true"]) {
+    border-color: var(--color-principal);
+    box-shadow: 0 0 0 3px rgba(26, 86, 219, 0.08);
+  }
+
+  .faq-button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    font-family: var(--fuente-texto);
+    transition: var(--transition);
+  }
+
+  .faq-button:hover { background: var(--color-bg-alt); }
+
+  .faq-question {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-texto);
+    line-height: 1.4;
+  }
+
+  .faq-icon {
+    font-size: 1.5rem;
+    font-weight: 300;
+    color: var(--color-principal);
+    flex-shrink: 0;
+    transition: transform 0.25s ease;
+    line-height: 1;
+  }
+
+  .faq-button[aria-expanded="true"] .faq-icon {
+    transform: rotate(45deg);
+  }
+
+  .faq-answer {
+    padding: 0 1.5rem 1.25rem;
+    border-top: 1px solid var(--color-borde);
+  }
+
+  .faq-answer p {
+    color: var(--color-texto-suave);
+    font-size: 0.95rem;
+    line-height: 1.7;
+    max-width: none;
+    padding-top: 1rem;
+  }
+</style>
+
+<script>
+  document.addEventListener("click", (e) => {
+    const btn = (e.target as Element).closest(".faq-button");
+    if (!btn) return;
+
+    const expanded = btn.getAttribute("aria-expanded") === "true";
+    const answerId = btn.getAttribute("aria-controls");
+    const answer = document.getElementById(answerId ?? "");
+
+    // Cerrar todos los demás
+    document.querySelectorAll(".faq-button").forEach((other) => {
+      if (other !== btn) {
+        other.setAttribute("aria-expanded", "false");
+        const otherId = other.getAttribute("aria-controls");
+        const otherAnswer = document.getElementById(otherId ?? "");
+        otherAnswer?.setAttribute("hidden", "");
+      }
+    });
+
+    // Toggle el actual
+    btn.setAttribute("aria-expanded", String(!expanded));
+    if (expanded) {
+      answer?.setAttribute("hidden", "");
+    } else {
+      answer?.removeAttribute("hidden");
+    }
+  });
+</script>

@@ -1,0 +1,11 @@
+---
+// Página: Conductor Privado en Barranquilla
+// URL: /conductor-bogota/conductor-en-barranquilla/
+// SEO: keyword "conductor privado barranquilla" + intención local
+import CityTemplate from "../../components/CityTemplate.astro";
+import { cities } from "../../data/cities";
+
+const city = cities.find((c) => c.slug === "conductor-en-barranquilla")!;
+---
+
+<CityTemplate city={city} />
