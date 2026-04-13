@@ -295,18 +295,26 @@ const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwykbQenV0gDvnq
     fecha: "",
     hora: "",
     detalles: "",
+    intento: "",
   };
 
   const flow = [
     {
       // 0
-      botMsg: `¡Hola! 👋 Soy el asistente de *${siteName}*.\n\n¿Cómo te llamas?`,
+      botMsg: `¡Hola! 👋 Soy el asistente de *${siteName}*.`,
+      inputType: "quick",
+      options: ["Solicitar conductor", "Más información", "Hablar con un asesor"],
+      field: "intento",
+    },
+    {
+      // 1
+      botMsg: "¿Cuál es tu nombre?",
       inputType: "text",
       placeholder: "Tu nombre completo",
       field: "nombre",
     },
     {
-      // 1
+      // 2
       botMsg: (s) => `¡Mucho gusto, ${s.nombre}! 😊\n\n¿Cuál es tu número de WhatsApp o celular?`,
       inputType: "text",
       placeholder: "Ej: 310 000 0000",
@@ -669,7 +677,7 @@ const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwykbQenV0gDvnq
   }
 
   function restartFlow() {
-    Object.assign(state, { step: 0, nombre: "", telefono: "", ciudad: "", servicio: "", fecha: "", hora: "", detalles: "" });
+    Object.assign(state, { step: 0, nombre: "", telefono: "", ciudad: "", servicio: "", fecha: "", hora: "", detalles: "", intento: "" });
     messagesEl.innerHTML = "";
     clearInput();
     datePickerShown = false;
