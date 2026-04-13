@@ -14,14 +14,14 @@ const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwykbQenV0gDvnq
   <span class="fab-badge" id="fab-badge">1</span>
 </button>
 
-<div class="chatbot-window" id="chatbot-window" hidden aria-live="polite">
+<div class="chatbot-window" id="chatbot-window" aria-live="polite" style="display: none;">
   <div class="chat-header">
     <div class="chat-avatar" aria-hidden="true">🤖</div>
     <div class="chat-header-info">
       <strong>Asistente {site.name}</strong>
       <span class="chat-status">● En línea</span>
     </div>
-    <button class="chat-close" id="chatbot-close" aria-label="Cerrar chat">✕</button>
+    <button class="chat-close" id="chatbot-close" aria-label="Cerrar chat" onclick="closeChatbot()">✕</button>
   </div>
 
   <div class="chat-messages" id="chat-messages" role="log" aria-label="Conversación">
@@ -142,6 +142,9 @@ const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwykbQenV0gDvnq
     padding: 0.25rem;
     opacity: 0.85;
     transition: opacity 0.15s;
+    position: relative;
+    z-index: 10000;
+    pointer-events: auto;
   }
   .chat-close:hover { opacity: 1; }
 
@@ -383,11 +386,12 @@ const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwykbQenV0gDvnq
 
   function openChat() {
     isOpen = true;
-    chatWindow.removeAttribute("hidden");
+    chatWindow.style.display = 'block';
     fabBtn.setAttribute("aria-expanded", "true");
-    fabOpen.setAttribute("hidden", "");
-    fabClose.removeAttribute("hidden");
+    fabOpen.style.display = 'none';
+    fabClose.style.display = 'flex';
     badge.style.display = "none";
+
     if (state.step === 0 && messagesEl.children.length === 0) {
       startConversation();
     }
@@ -396,29 +400,15 @@ const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwykbQenV0gDvnq
 
   function closeChat() {
     isOpen = false;
-    chatWindow.setAttribute("hidden", "");
+    chatWindow.style.display = 'none';
     fabBtn.setAttribute("aria-expanded", "false");
-    fabOpen.removeAttribute("hidden");
-    fabClose.setAttribute("hidden", "");
+    fabOpen.style.display = 'flex';
+    fabClose.style.display = 'none';
   }
 
   fabBtn.addEventListener("click", () => isOpen ? closeChat() : openChat());
 
-  document.addEventListener("click", function(e) {
-    if (e.target.closest("#chatbot-close")) {
-      e.stopPropagation();
-      closeChat();
-    }
-  });
 
-  document.addEventListener("click", function(e) {
-    const waLink = e.target.closest('a[href*="wa.me"]');
-    if (waLink) {
-      e.preventDefault();
-      e.stopPropagation();
-      openChat();
-    }
-  });
 
   // Evitar que clics dentro de la ventana del chat se propaguen al documento
   chatWindow.addEventListener("click", function(e) {
@@ -695,6 +685,27 @@ const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwykbQenV0gDvnq
   function startConversation() {
     setTimeout(() => showStep(0), 400);
   }
+
+  // Simple close function for HTML onclick
+  window.closeChatbot = function() {
+    const chatWindow = document.getElementById('chatbot-window');
+    const fabBtn = document.getElementById('chatbot-toggle');
+    const fabOpen = document.querySelector('.fab-icon--open');
+    const fabClose = document.querySelector('.fab-icon--close');
+
+    if (chatWindow) {
+      chatWindow.style.display = 'none';
+    }
+    if (fabBtn) {
+      fabBtn.setAttribute('aria-expanded', 'false');
+    }
+    if (fabOpen) {
+      fabOpen.style.display = 'flex';
+    }
+    if (fabClose) {
+      fabClose.style.display = 'none';
+    }
+  };
 
   setTimeout(() => {
     if (!isOpen && badge) {
